@@ -22,8 +22,8 @@ const (
 //
 // https://developer.paypal.com/docs/api/payment-experience/#definition-input_fields
 const (
-	NoShippingDisplay      uint = 0
-	NoShippingHide         uint = 1
+	NoShippingDisplay uint = 0
+	NoShippingHide uint = 1
 	NoShippingBuyerAccount uint = 2
 )
 
@@ -40,10 +40,131 @@ const (
 // https://developer.paypal.com/docs/api/payment-experience/#definition-flow_config
 const (
 	LandingPageTypeBilling string = "Billing"
-	LandingPageTypeLogin   string = "Login"
+	LandingPageTypeLogin string = "Login"
 )
 
 type (
+
+	Agreement struct {
+		/**
+		 * Identifier of the agreement.
+		 */
+		Id                          string `json:"id,omitempty"`
+
+		/**
+		 * State of the agreement
+		 */
+		State                       string `json:"state,omitempty"`
+
+		/**
+		 * Name of the agreement.
+		 */
+		Name                        string `json:"name,omitempty"`
+
+		/**
+		 * Description of the agreement.
+		 */
+		Description                 string `json:"description,omitempty"`
+
+		/**
+		 * Start date of the agreement. Date format yyyy-MM-dd z, as defined in [ISO8601](http://tools.ietf.org/html/rfc3339#section-5.6).
+		 */
+		StartDate                   string `json:"start_date,omitempty"`
+
+		/**
+		 * Details of the agreement.
+		 */
+		AgreementDetails            AgreementDetails `json:"agreement_details,omitempty"`
+
+		/**
+		 * Details of the buyer who is enrolling in this agreement. This information is gathered from execution of the approval URL.
+		 */
+		Payer                       Payer `json:"payer,omitempty"`
+
+		/**
+		 * Shipping address object of the agreement, which should be provided if it is different from the default address.
+		 */
+		ShippingAddress             Address `json:"shipping_address,omitempty"`
+
+		/**
+		 * Default merchant preferences from the billing plan are used, unless override preferences are provided here.
+		 */
+		OverrideMerchantPreferences MerchantPreferences `json:"override_merchant_preferences,omitempty"`
+
+		/**
+		 * Array of override_charge_model for this agreement if needed to change the default models from the billing plan.
+		 */
+		OverrideChargeModels        []OverrideChargeModel `json:"override_charge_models,omitempty"`
+
+		/**
+		 * Plan details for this agreement.
+		 */
+		Plan                        Plan `json:"plan,omitempty"`
+
+		/**
+		 * Date and time that this resource was created. Date format yyyy-MM-dd z, as defined in [ISO8601](http://tools.ietf.org/html/rfc3339#section-5.6).
+		 */
+		CreateTime                  string `json:"create_time,omitempty"`
+
+		/**
+		 * Date and time that this resource was updated. Date format yyyy-MM-dd z, as defined in [ISO8601](http://tools.ietf.org/html/rfc3339#section-5.6).
+		 */
+		UpdateTime                  string `json:"update_time,omitempty"`
+
+		/**
+		 * Payment token
+		 */
+		Token                       string `json:"token,omitempty"`
+
+		/**
+		 *
+		 */
+		Links                       []Link `json:"links,omitempty"`
+	}
+
+	AgreementDetails struct {
+		/**
+		* The outstanding balance for this agreement.
+		*/
+		OutstandingBalance AmountPayout `json:"outstanding_balance,omitempty"`
+
+		/**
+		 * Number of cycles remaining for this agreement.
+		 */
+		CyclesRemaining    string `json:"cycles_remaining,omitempty"`
+
+		/**
+		 * Number of cycles completed for this agreement.
+		 */
+		CyclesCompleted    string `json:"cycles_completed,omitempty"`
+
+		/**
+		 * The next billing date for this agreement, represented as 2014-02-19T10:00:00Z format.
+		 */
+		NextBillingDate    string `json:"next_billing_date,omitempty"`
+
+		/**
+		 * Last payment date for this agreement, represented as 2014-06-09T09:42:31Z format.
+		 */
+		LastPaymentDate    string `json:"last_payment_date,omitempty"`
+
+		/**
+		 * Last payment amount for this agreement.
+		 */
+		LastPaymentAmount  string `json:"last_payment_amount,omitempty"`
+
+		/**
+		 * Last payment date for this agreement, represented as 2015-02-19T10:00:00Z format.
+		 */
+		FinalPaymentDate   string `json:"final_payment_date,omitempty"`
+
+		/**
+		 * Total number of failed payments for this agreement.
+		 */
+		FailedPaymentCount string `json:"failed_payment_count,omitempty"`
+	}
+
+
 	// Address struct
 	Address struct {
 		Line1       string `json:"line1"`
@@ -103,6 +224,23 @@ type (
 		ParentPayment  string     `json:"parent_payment,omitempty"`
 		ID             string     `json:"id,omitempty"`
 		Links          []Link     `json:"links,omitempty"`
+	}
+
+	ChargeModels struct {
+		/**
+		 * Identifier of the charge model. 128 characters max.
+		 */
+		Id     string `json:"id,omitempty"`
+
+		/**
+		 * Type of charge model. Allowed values: `SHIPPING`, `TAX`.
+		 */
+		Type   string `json:"type,omitempty"`
+
+		/**
+		 * Specific amount for this charge model.
+		 */
+		Amount AmountPayout `json:"amount,omitempty"`
 	}
 
 	// Client represents a Paypal REST API Client
@@ -216,6 +354,58 @@ type (
 		Enctype string `json:"enctype,omitempty"`
 	}
 
+	MerchantPreferences struct {
+		/**
+	 * Identifier of the merchant_preferences. 128 characters max.
+	 */
+		Id                      string `json:"id"`
+
+		/**
+		 * Setup fee amount. Default is 0.
+		 */
+		SetupFee                AmountPayout `json:"setup_fee"`
+
+		/**
+		 * Redirect URL on cancellation of agreement request. 1000 characters max.
+		 */
+		CancelUrl               string `json:"cancel_url"`
+
+		/**
+		 * Redirect URL on creation of agreement request. 1000 characters max.
+		 */
+		ReturnUrl               string `json:"return_url"`
+
+		/**
+		 * Notify URL on agreement creation. 1000 characters max.
+		 */
+		NotifyUrl               string `json:"notify_url"`
+
+		/**
+		 * Total number of failed attempts allowed. Default is 0, representing an infinite number of failed attempts.
+		 */
+		MaxFailAttempts         string `json:"max_fail_attempts"`
+
+		/**
+		 * Allow auto billing for the outstanding amount of the agreement in the next cycle. Allowed values: `YES`, `NO`. Default is `NO`.
+		 */
+		AutoBillAmount          string `json:"auto_bill_amount"`
+
+		/**
+		 * Action to take if a failure occurs during initial payment. Allowed values: `CONTINUE`, `CANCEL`. Default is continue.
+		 */
+		InitialFailAmountAction string `json:"initial_fail_amount_action"`
+
+		/**
+		 * Payment types that are accepted for this plan.
+		 */
+		AcceptedPaymentType     string `json:"accepted_payment_type"`
+
+		/**
+		 * char_set for this plan.
+		 */
+		CharSet                 string `json:"charset"`
+	}
+
 	// Order struct
 	Order struct {
 		ID            string     `json:"id,omitempty"`
@@ -227,6 +417,19 @@ type (
 		ParentPayment string     `json:"parent_payment,omitempty"`
 		Links         []Link     `json:"links,omitempty"`
 	}
+
+	OverrideChargeModel struct {
+		/**
+		 * ID of charge model.
+		 */
+		ChargeId string `json:"charge_id,omitempty"`
+
+		/**
+		 * Updated Amount to be associated with this charge model.
+		 */
+		Currency AmountPayout `json:"currency,omitempty"`
+	}
+
 
 	// Payer struct
 	Payer struct {
@@ -259,6 +462,48 @@ type (
 		State               string        `json:"state,omitempty"`
 		UpdateTime          *time.Time    `json:"update_time,omitempty"`
 		ExperienceProfileID string        `json:"experience_profile_id,omitempty"`
+	}
+
+	PaymentDefinition struct {
+		/**
+		 * Identifier of the payment_definition. 128 characters max.
+		 */
+		Id                string `json:"id,omitempty"`
+
+		/**
+		 * Name of the payment definition. 128 characters max.
+		 */
+		Name              string `json:"name,omitempty"`
+
+		/**
+		 * Type of the payment definition. Allowed values: `TRIAL`, `REGULAR`.
+		 */
+		Type              string `json:"type,omitempty"`
+
+		/**
+		 * How frequently the customer should be charged.
+		 */
+		FrequencyInterval string `json:"frequency_interval,omitempty"`
+
+		/**
+		 * Frequency of the payment definition offered. Allowed values: `WEEK`, `DAY`, `YEAR`, `MONTH`.
+		 */
+		Frequency         string `json:"frequency,omitempty"`
+
+		/**
+		 * Number of cycles in this payment definition.
+		 */
+		Cycles            string `json:"cycles,omitempty"`
+
+		/**
+		 * Amount that will be charged at the end of each cycle for this payment definition.
+		 */
+		amount            AmountPayout `json:"amount_payout,omitempty"`
+
+		/**
+		 * Array of charge_models for this payment definition.
+		 */
+		ChargeModels      []ChargeModels `json:"charge_models,omitempty"`
 	}
 
 	// PaymentResponse structure
@@ -299,6 +544,63 @@ type (
 		BatchHeader *BatchHeader         `json:"batch_header"`
 		Items       []PayoutItemResponse `json:"items"`
 		Links       []Link               `json:"links"`
+	}
+
+	Plan struct {
+		/**
+		 * Identifier of the billing plan. 128 characters max.
+		 */
+		Id                  string `json:"id,omitempty"`
+
+		/**
+		 * Name of the billing plan. 128 characters max.
+		 */
+		Name                string `json:"name,omitempty"`
+
+		/**
+		 * Description of the billing plan. 128 characters max.
+		 */
+		Description         string `json:"fescription,omitempty"`
+
+		/**
+		 * Type of the billing plan. Allowed values: `FIXED`, `INFINITE`.
+		 */
+		Type                string `json:"type,omitempty"`
+
+		/**
+		 * Status of the billing plan. Allowed values: `CREATED`, `ACTIVE`, `INACTIVE`, and `DELETED`.
+		 */
+		State               string `json:"state,omitempty"`
+
+		/**
+		 * Time when the billing plan was created. Format YYYY-MM-DDTimeTimezone, as defined in [ISO8601](http://tools.ietf.org/html/rfc3339#section-5.6).
+		 */
+		CreateTime          string `json:"create_time,omitempty"`
+
+		/**
+		 * Time when this billing plan was updated. Format YYYY-MM-DDTimeTimezone, as defined in [ISO8601](http://tools.ietf.org/html/rfc3339#section-5.6).
+		 */
+		UpdateTime          string `json:"update_time,omitempty"`
+
+		/**
+		 * Array of payment definitions for this billing plan.
+		 */
+		PaymentDefinitions  []PaymentDefinition `json:"payment_definitions,omitempty"`
+
+		/**
+		 * Array of terms for this billing plan.
+		 */
+		Terms               []Terms `json:"terms,omitempty"`
+
+		/**
+		 * Specific preferences such as: set up fee, max fail attempts, autobill amount, and others that are configured for this billing plan.
+		 */
+		MerchantPreferences MerchantPreferences `json:"merchant_preferences,omitempty"`
+
+		/**
+		 *
+		 */
+		Links               []Link `json:"links,omitempty"`
 	}
 
 	// RedirectURLs struct
@@ -361,6 +663,39 @@ type (
 		PostalCode    string `json:"postal_code,omitempty"`
 		State         string `json:"state,omitempty"`
 		Phone         string `json:"phone,omitempty"`
+	}
+
+
+	Terms struct {
+		/**
+		 * Identifier of the terms. 128 characters max.
+		 */
+		Id               string `json:"id,omitempty"`
+
+		/**
+		 * Term type. Allowed values: `MONTHLY`, `WEEKLY`, `YEARLY`.
+		 */
+		Type             string `json:"type,omitempty"`
+
+		/**
+		 * Max Amount associated with this term.
+		 */
+		MaxBillingAmount Amount `json:"max_billing_amount,omitempty"`
+
+		/**
+		 * How many times money can be pulled during this term.
+		 */
+		Occurrences      string `json:"occurrences,omitempty"`
+
+		/**
+		 * Amount_range associated with this term.
+		 */
+		AmountRange      AmountPayout `json:"amount_range,omitempty"`
+
+		/**
+		 * Buyer's ability to edit the amount in this term.
+		 */
+		BuyerEditable    string `json:"buyer_editable,omitempty"`
 	}
 
 	// TokenResponse is for API response for the /oauth2/token endpoint
