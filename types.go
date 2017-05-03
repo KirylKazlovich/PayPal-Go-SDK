@@ -498,7 +498,7 @@ type (
 		/**
 		 * Amount that will be charged at the end of each cycle for this payment definition.
 		 */
-		amount            AmountPayout `json:"amount_payout,omitempty"`
+		Amount            AmountPayout `json:"amount_payout,omitempty"`
 
 		/**
 		 * Array of charge_models for this payment definition.
@@ -601,6 +601,16 @@ type (
 		 *
 		 */
 		Links               []Link `json:"links,omitempty"`
+	}
+
+	PlanUpdateAttributes struct {
+		Op    string `json:"op,omitempty"`
+		Path  string `json:"path,omitempty"`
+		Value PlanState `json:"value,omitempty"`
+	}
+
+	PlanState struct {
+		State string
 	}
 
 	// RedirectURLs struct
